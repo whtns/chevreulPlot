@@ -162,7 +162,7 @@ get_feature_types <- function(object) {
 #'
 #' @param object a SingleCellExperiment object
 #' @param feature_type feature type
-#' @return an object with assigned feature type
+#' @return a SingleCellExperiment object with assigned feature type
 #' @export
 #'
 #' @examples
@@ -181,7 +181,7 @@ set_feature_type <- function(object, feature_type) {
 #' @param object a SingleCellExperiment object
 #' @param experiment an experiment name
 #'
-#' @return Main or alt experiment in an object
+#' @return Main or alt experiment in a SingleCellExperiment object
 #' @export
 #'
 #' @examples

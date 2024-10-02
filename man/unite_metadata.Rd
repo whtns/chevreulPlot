@@ -7,12 +7,12 @@
 unite_metadata(object, group_bys)
 }
 \arguments{
-\item{object}{An object}
+\item{object}{A SingleCellExperiment object}
 
 \item{group_bys}{A feature or variable to combine}
 }
 \value{
-an object with Idents formed from concatenation of group_bys
+a SingleCellExperiment object with Idents formed from concatenation of group_bys
 }
 \description{
 Unite metadata

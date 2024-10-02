@@ -12,7 +12,7 @@ retrieve_experiment(object, experiment)
 \item{experiment}{an experiment name}
 }
 \value{
-Main or alt experiment in an object
+Main or alt experiment in a SingleCellExperiment object
 }
 \description{
 Retrieve Assay

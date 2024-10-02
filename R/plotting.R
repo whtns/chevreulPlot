@@ -13,10 +13,10 @@ enframe_markers <- function(marker_table) {
 
 #' Unite metadata
 #'
-#' @param object An object
+#' @param object A SingleCellExperiment object
 #' @param group_bys A feature or variable to combine
 #'
-#' @return an object with Idents formed from concatenation of group_bys
+#' @return a SingleCellExperiment object with Idents formed from concatenation of group_bys
 #' @export
 #'
 #' @examples
