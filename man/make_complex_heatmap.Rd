@@ -49,3 +49,7 @@ a complexheatmap
 \description{
 Plot Annotated Complexheatmap from SingleCellExperiment object
 }
+\examples{
+make_complex_heatmap(tiny_sce)
+
+}

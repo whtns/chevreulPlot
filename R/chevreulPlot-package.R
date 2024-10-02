@@ -127,33 +127,6 @@
 #' @importFrom scuttle addPerCellQCMetrics
 #' @importFrom scuttle logNormCounts
 #' @importFrom scuttle mockSCE
-#' @importFrom shiny incProgress
-#' @importFrom shiny selectInput
-#' @importFrom shiny withProgress
-#' @importFrom shinydashboard box
-#' @importFrom shinydashboard dashboardBody
-#' @importFrom shinydashboard dashboardHeader
-#' @importFrom shinydashboard dashboardSidebar
-#' @importFrom shinydashboard menuItem
-#' @importFrom shinydashboard sidebarMenu
-#' @importFrom shinydashboard tabItem
-#' @importFrom shinydashboard tabItems
-#' @importFrom shinyFiles getVolumes
-#' @importFrom shinyFiles parseFilePaths
-#' @importFrom shinyFiles parseSavePath
-#' @importFrom shinyFiles shinyFileChoose
-#' @importFrom shinyFiles shinyFileSave
-#' @importFrom shinyFiles shinyFilesButton
-#' @importFrom shinyFiles shinySaveButton
-#' @importFrom shinyhelper helper
-#' @importFrom shinyhelper observe_helpers
-#' @importFrom shinyjs alert
-#' @importFrom shinyjs hidden
-#' @importFrom shinyjs html
-#' @importFrom shinyjs runcodeServer
-#' @importFrom shinyjs runcodeUI
-#' @importFrom shinyjs useShinyjs
-#' @importFrom shinyWidgets prettyRadioButtons
 #' @importFrom stats as.dendrogram
 #' @importFrom stats dist
 #' @importFrom stats hclust
@@ -188,7 +161,6 @@
 #' @import ggplot2
 #' @import SingleCellExperiment
 #' @import SummarizedExperiment
-#' @import shiny
 #' @import dplyr
 #' @import stringr
 #' @import tidyr

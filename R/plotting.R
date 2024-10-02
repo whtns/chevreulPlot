@@ -1,3 +1,16 @@
+#' Enframe Markers
+#'
+#' @param marker_table a table of marker genes
+#'
+#' @return a table of marker genes
+enframe_markers <- function(marker_table) {
+    marker_table |>
+        select(Gene.Name, Cluster) |>
+        mutate(rn = row_number()) |>
+        pivot_wider(names_from = Cluster, values_from = Gene.Name) |>
+        select(-rn)
+}
+
 #' Unite metadata
 #'
 #' @param object An object
@@ -114,6 +127,10 @@ plotly_settings <- function(plotly_plot, width = 600, height = 700) {
 #' @param ... extra parameters passed to ggplot2
 #'
 #' @return a violin plot
+#' @export
+#' @examples
+#' plot_violin(small_example_dataset, "Mutation_Status", features = "Gene_0001")
+#' 
 plot_violin <- function(object, plot_var = "batch", 
                         plot_vals = NULL, features = "NRL", 
                         experiment = "gene", ...) {
@@ -218,6 +235,8 @@ annotate_cell_cycle <- function(object) {
 #'
 #' @return a ggplot with marker genes from group_by
 #' @export
+#' @importFrom chevreulProcess find_all_markers
+#' @importFrom forcats fct_na_value_to_level
 #'
 #' @examples
 #' 
@@ -229,7 +248,6 @@ plot_markers <- function(object, group_by = "batch", num_markers = 5,
                          marker_method = "wilcox", experiment = "gene", 
                          hide_technical = NULL, unique_markers = FALSE, 
                          p_val_cutoff = 1, ...) {
-    # Idents(object) <- get_cell_metadata(object)[[group_by]]
     object <- find_all_markers(object, group_by, experiment = experiment, 
                                p_val_cutoff = p_val_cutoff)
     marker_table <- metadata(object)$markers[[group_by]]
@@ -285,7 +303,7 @@ plot_markers <- function(object, group_by = "batch", num_markers = 5,
     vline_coords <- head(cumsum(table(sliced_markers$group)) + 0.5, -1)
     sliced_markers <- pull(sliced_markers, feature)
 
-    object[[group_by]] <- forcats::fct_na_value_to_level(object[[group_by]])
+    object[[group_by]] <- fct_na_value_to_level(factor(object[[group_by]]))
     markerplot <- plotDots(object, features = sliced_markers, 
                            group = group_by) +
         theme(axis.text.x = element_text(size = 10, angle = 45, 
@@ -378,6 +396,10 @@ plot_readcount <- function(object, group_by = NULL, fill_by = NULL,
 #' @param ... additional arguments passed to Heatmap
 #'
 #' @return a complexheatmap
+#' @export
+#' @examples
+#' make_complex_heatmap(tiny_sce)
+#' 
 make_complex_heatmap <- function(object, features = NULL, group.by = "ident", 
                                  cells = NULL, assayName = "logcounts", 
                                  experiment = NULL, group.bar.height = 0.01, 
@@ -562,6 +584,10 @@ plot_transcript_composition <- function(object, gene_symbol,
 #' @param combine TRUE
 #'
 #' @return a list of embedding plots colored by a feature of interest
+#' @export
+#' @examples
+#' plot_all_transcripts(tiny_sce, "NRL")
+#' 
 plot_all_transcripts <- function(object, features, 
                                  embedding = "UMAP", 
                                  from_gene = TRUE, combine = TRUE) {

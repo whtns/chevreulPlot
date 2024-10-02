@@ -29,14 +29,19 @@ list_plot_types <- function(object) {
         filter(meta_type == "continuous") |>
         pull(vars)
 
-    continuous_vars <- c("feature", continuous_vars) |>
-        set_names(str_to_title(str_replace_all(., "[[:punct:]]", " ")))
-
+    continuous_vars <- c("feature", continuous_vars)
+    
+    names(continuous_vars) <- 
+        str_to_title(str_replace_all(continuous_vars, "[[:punct:]]", " "))
 
     category_vars <- meta_types |>
         filter(meta_type == "category") |>
-        pull(vars) |>
-        set_names(str_to_title(str_replace_all(., "[^[:alnum:][:space:]\\.]", " ")))
+        pull(vars)
+    
+    names(category_vars) <-  
+        str_to_title(str_replace_all(
+            category_vars, 
+            "[^[:alnum:][:space:]\\.]", " "))
 
     plot_types <- list(category_vars = category_vars, continuous_vars = continuous_vars)
 
