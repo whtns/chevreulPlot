@@ -1,64 +1,3 @@
-#' Create a database of bigwigfiles
-#'
-#' Create a sqlite database of bigwig files matching cell ids in objects
-#'
-#' @param bam_files vector of paths to bam files
-#' @param bigwig_db bigwig database
-#'
-#' @return a path to a bigwig file sqlite database
-#' @export
-build_bigwig_db <- function(bam_files, 
-                            bigwig_db = "~/.cache/chevreul/bw-files.db") {
-    bam_files <- normalizePath(bam_files)
-
-    bigwigfiles <- map_chr(bam_files,
-                           ~ bam_to_bigwig(.x,
-                                           prefix = path_ext_remove(.x),
-                                           overwrite = TRUE)) |>
-        set_names(path_file) |>
-        enframe("name", "bigWig") |>
-        mutate(sample_id = 
-                   str_remove(name, "_Aligned.sortedByCoord.out.bw")) |>
-        identity()
-
-    con <- dbConnect(SQLite(), dbname = bigwig_db)
-
-    dbWriteTable(con, "bigwigfiles", bigwigfiles, append = TRUE)
-
-    dbDisconnect(con)
-}
-
-#' Load Bigwigs
-#'
-#' Load a tibble of bigwig file paths by cell id
-#'
-#' @param object A object
-#' @param bigwig_db Sqlite database of bigwig files
-#'
-#' @return a vector of bigwigs file paths
-load_bigwigs <- function(object, bigwig_db = "~/.cache/chevreul/bw-files.db") {
-    con <- dbConnect(SQLite(), dbname = bigwig_db)
-
-    bigwigfiles <- dbReadTable(con, "bigwigfiles") |>
-        filter(sample_id %in% colnames(object)) |>
-        identity()
-
-    missing_bigwigs <- colnames(object)[!(colnames(object) %in% 
-                                              bigwigfiles$sample_id)] |>
-        paste(collapse = ", ")
-
-    warning(paste0("Sample coverage files ", missing_bigwigs, 
-                   "(.bw) do not match samples in object (check file names)"))
-
-    dbDisconnect(con)
-
-    bigwigfiles <-
-        bigwigfiles |>
-        filter(sample_id %in% colnames(object))
-
-    return(bigwigfiles)
-}
-
 #' Plot BigWig Coverage for Genes of Interest by a Given Variable
 #'
 #' Plot BigWig coverage for genes of interest colored by a given variable
@@ -81,6 +20,7 @@ load_bigwigs <- function(object, bigwig_db = "~/.cache/chevreul/bw-files.db") {
 #' @param ... extra arguments passed to plotCoverageFromEnsembldb
 #'
 #' @return a ggplot with coverage faceted by group_by
+#' @export
 plot_gene_coverage_by_var <- function(
         genes_of_interest = "NRL",
         cell_metadata,

@@ -11,31 +11,6 @@ enframe_markers <- function(marker_table) {
         select(-rn)
 }
 
-#' Unite metadata
-#'
-#' @param object A SingleCellExperiment object
-#' @param group_bys A feature or variable to combine
-#'
-#' @return a SingleCellExperiment object with Idents formed from concatenation of group_bys
-#' @export
-#'
-#' @examples
-#' 
-#' 
-#' data(small_example_dataset)
-#' unite_metadata(small_example_dataset, "Mutation_Status")
-#'
-unite_metadata <-
-    function(object, group_bys) {
-        newcolname <- paste(group_bys, collapse = "_by_")
-        newdata <- colData(object)[group_bys] |>
-            as.data.frame() |>
-            unite(!!newcolname, any_of(group_bys)) |>
-            deframe()
-
-        return(object)
-    }
-
 #' Plot Metadata Variables
 #'
 #' Plots static or interactive plot where each point represents a cell metadata
@@ -68,7 +43,7 @@ plot_var <- function(object, group = "batch",
                      embedding = "UMAP", dims = c(1, 2), 
                      highlight = NULL, pt.size = 1.0, 
                      return_plotly = FALSE, ...) {
-    metadata <- get_cell_metadata(object)
+    metadata <- get_colData(object)
     key <- rownames(metadata)
 
     if (embedding == "UMAP") {
@@ -93,8 +68,9 @@ plot_var <- function(object, group = "batch",
         plotly_settings() |>
         toWebGL() |>
         identity()
+    
+    return(plotly_plot)
 }
-
 
 #' Plotly settings
 #'
@@ -103,6 +79,7 @@ plot_var <- function(object, group = "batch",
 #' @param plotly_plot  A plotly plot
 #' @param width Default set to '600'
 #' @param height Default set to '700'
+#' @export
 #'
 #' @noRd
 plotly_settings <- function(plotly_plot, width = 600, height = 700) {
@@ -135,17 +112,15 @@ plot_violin <- function(object, plot_var = "batch",
                         plot_vals = NULL, features = "NRL", 
                         experiment = "gene", ...) {
     if (is.null(plot_vals)) {
-        plot_vals <- unique(get_cell_metadata(object)[[plot_var]])
+        plot_vals <- unique(get_colData(object)[[plot_var]])
         plot_vals <- plot_vals[!is.na(plot_vals)]
     }
-    object <- object[, get_cell_metadata(object)[[plot_var]] %in% plot_vals]
+    object <- object[, get_colData(object)[[plot_var]] %in% plot_vals]
     vln_plot <- plotExpression(
         object, features = features, x = plot_var, color_by = plot_var) + 
         geom_boxplot(width = 0.2) + NULL
     print(vln_plot)
 }
-
-
 
 #' Plot Feature
 #'
@@ -172,7 +147,7 @@ plot_feature <- function(object, embedding = c("UMAP", "PCA", "TSNE"),
                          pt.size = 1.0) {
     embedding <- toupper(embedding)
 
-    metadata <- get_cell_metadata(object)
+    metadata <- get_colData(object)
     key <- rownames(metadata)
 
     if (embedding %in% c("TSNE", "UMAP")) {
@@ -194,26 +169,8 @@ plot_feature <- function(object, embedding = c("UMAP", "PCA", "TSNE"),
         toWebGL() |>
         # partial_bundle() |>
         identity()
-}
 
-#' Annotate Cell Cycle
-#'
-#' Annotate Cell Cycle for Gene and Transcript SingleCellExperiment Objects
-#'
-#' @param object A SingleCellExperiment object
-#'
-#' @return a SingleCellExperiment object
-annotate_cell_cycle <- function(object) {
-    
-    data_env <- new.env(parent = emptyenv())
-    data("cc.genes.cyclone", envir = data_env, package = "chevreul")
-    cc.genes.cyclone <- data_env[["cc.genes.cyclone"]]
-    
-   assignments <- cyclone(object, cc.genes.cyclone, 
-                          gene.names = rownames(object))
-    colData(object)[colnames(assignments$scores)] <- assignments$scores
-    colData(object)["Phase"] <- assignments$phases
-    return(object)
+    return(plotly_plot)
 }
 
 #' Plot Cluster Marker Genes
@@ -294,7 +251,7 @@ plot_markers <- function(object, group_by = "batch", num_markers = 5,
         distinct(feature, .keep_all = TRUE) |>
         identity()
     if (!is.null(selected_values)) {
-        object <- object[, get_cell_metadata(object)[[group_by]] %in% 
+        object <- object[, get_colData(object)[[group_by]] %in% 
                              selected_values]
         sliced_markers <- sliced_markers |>
             filter(group %in% selected_values) |>
@@ -318,7 +275,7 @@ plot_markers <- function(object, group_by = "batch", num_markers = 5,
     }
     plot_height <- (150 * num_markers)
     plot_width <- (100 * length(levels(
-        as.factor(get_cell_metadata(object)[[group_by]]))))
+        as.factor(get_colData(object)[[group_by]]))))
     markerplot <- ggplotly(markerplot, height = plot_height, 
                            width = plot_width) |>
         plotly_settings() |>
@@ -326,7 +283,6 @@ plot_markers <- function(object, group_by = "batch", num_markers = 5,
         identity()
     return(list(plot = markerplot, markers = marker_table))
 }
-
 
 #' Plot Read Count
 #'
@@ -356,7 +312,7 @@ plot_readcount <- function(object, group_by = NULL, fill_by = NULL,
     fill_by <- group_by %||% glue("nCount_{mainExpName(object)}")
     
     object_tbl <- rownames_to_column(
-        get_cell_metadata(object), "SID") |> select(SID, 
+        get_colData(object), "SID") |> select(SID, 
                                                      !!as.symbol(group_by), 
                                                      !!as.symbol(fill_by))
     rc_plot <- ggplot(object_tbl, aes(x = reorder(SID, -!!as.symbol(group_by)), 
@@ -377,7 +333,6 @@ plot_readcount <- function(object, group_by = NULL, fill_by = NULL,
         toWebGL() |>
         identity()
 }
-
 
 #' Plot Annotated Complexheatmap from SingleCellExperiment object
 #'
@@ -495,7 +450,6 @@ make_complex_heatmap <- function(object, features = NULL, group.by = "ident",
     return(hm)
 }
 
-
 #' Plot Transcript Composition
 #'
 #' plot the proportion of reads of a given gene map to each transcript
@@ -532,7 +486,7 @@ plot_transcript_composition <- function(object, gene_symbol,
         filter(symbol == gene_symbol) |>
         left_join(grch38_tx2gene, by = "ensgene") |>
         pull(enstxp)
-    metadata <- get_cell_metadata(object)
+    metadata <- get_colData(object)
     metadata$sample_id <- NULL
     metadata <- metadata |>
         rownames_to_column("sample_id") |>
