@@ -353,6 +353,7 @@ plot_colData_histogram <- function(object, group_by = NULL, fill_by = NULL,
 #' @return a complexheatmap
 #' @export
 #' @examples
+#' data("tiny_sce")
 #' make_complex_heatmap(tiny_sce)
 #' 
 make_complex_heatmap <- function(object, features = NULL, group.by = "ident", 
@@ -467,8 +468,6 @@ make_complex_heatmap <- function(object, features = NULL, group.by = "ident",
 #' @examples
 #' 
 #' data(tiny_sce)
-#' data("grch38_tx2gene")
-#' data("grch38")
 #' plot_transcript_composition(tiny_sce, "NRL")
 #'
 plot_transcript_composition <- function(object, gene_symbol, 

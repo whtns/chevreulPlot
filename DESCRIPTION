@@ -21,8 +21,12 @@ Depends:
     chevreulProcess
 Imports:
     base,
+    chevreuldata,
     ComplexHeatmap (>= 2.5.4),
+    circlize,
     dplyr,
+    EnsDb.Hsapiens.v86,
+    EnsDb.Mmusculus.v79,
     forcats,
     fs,
     ggplot2,
@@ -33,6 +37,8 @@ Imports:
     purrr,
     S4Vectors,
     scales,
+    scater,
+    scran,
     stats,
     stringr,
     SummarizedExperiment,
