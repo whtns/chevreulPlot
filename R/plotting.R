@@ -34,12 +34,12 @@ enframe_markers <- function(marker_table) {
 #' data(small_example_dataset)
 #' 
 #' # static mode
-#' plot_var(small_example_dataset, "Mutation_Status", return_plotly = FALSE)
+#' plot_colData_on_embedding(small_example_dataset, "Mutation_Status", return_plotly = FALSE)
 #'
 #' # interactive plotly plot
-#' plot_var(small_example_dataset, "Mutation_Status", return_plotly = TRUE)
+#' plot_colData_on_embedding(small_example_dataset, "Mutation_Status", return_plotly = TRUE)
 #'
-plot_var <- function(object, group = "batch", 
+plot_colData_on_embedding <- function(object, group = "batch", 
                      embedding = "UMAP", dims = c(1, 2), 
                      highlight = NULL, pt.size = 1.0, 
                      return_plotly = FALSE, ...) {
@@ -97,7 +97,7 @@ plotly_settings <- function(plotly_plot, width = 600, height = 700) {
 #' grouped by a metadata variable
 #'
 #' @param object A SingleCellExperiment object
-#' @param plot_var Variable to group (color) cells by
+#' @param plot_colData_on_embedding Variable to group (color) cells by
 #' @param plot_vals plot values
 #' @param features Features to plot
 #' @param experiment Name of experiment to use, defaults to active experiment
@@ -108,16 +108,16 @@ plotly_settings <- function(plotly_plot, width = 600, height = 700) {
 #' @examples
 #' plot_violin(small_example_dataset, "Mutation_Status", features = "Gene_0001")
 #' 
-plot_violin <- function(object, plot_var = "batch", 
+plot_violin <- function(object, plot_colData_on_embedding = "batch", 
                         plot_vals = NULL, features = "NRL", 
                         experiment = "gene", ...) {
     if (is.null(plot_vals)) {
-        plot_vals <- unique(get_colData(object)[[plot_var]])
+        plot_vals <- unique(get_colData(object)[[plot_colData_on_embedding]])
         plot_vals <- plot_vals[!is.na(plot_vals)]
     }
-    object <- object[, get_colData(object)[[plot_var]] %in% plot_vals]
+    object <- object[, get_colData(object)[[plot_colData_on_embedding]] %in% plot_vals]
     vln_plot <- plotExpression(
-        object, features = features, x = plot_var, color_by = plot_var) + 
+        object, features = features, x = plot_colData_on_embedding, color_by = plot_colData_on_embedding) + 
         geom_boxplot(width = 0.2) + NULL
     print(vln_plot)
 }
@@ -139,10 +139,10 @@ plot_violin <- function(object, plot_var = "batch",
 #' @examples
 #' 
 #' data(small_example_dataset)
-#' plot_feature(small_example_dataset, embedding = "UMAP", 
+#' plot_feature_on_embedding(small_example_dataset, embedding = "UMAP", 
 #' features = "Gene_0001")
 #'
-plot_feature <- function(object, embedding = c("UMAP", "PCA", "TSNE"), 
+plot_feature_on_embedding <- function(object, embedding = c("UMAP", "PCA", "TSNE"), 
                          features, dims = c(1, 2), return_plotly = FALSE,
                          pt.size = 1.0) {
     embedding <- toupper(embedding)
@@ -198,9 +198,9 @@ plot_feature <- function(object, embedding = c("UMAP", "PCA", "TSNE"),
 #' @examples
 #' 
 #' data(small_example_dataset)
-#' plot_markers(small_example_dataset, group_by = "gene_snn_res.1")
+#' plot_marker_features(small_example_dataset, group_by = "gene_snn_res.1")
 #'
-plot_markers <- function(object, group_by = "batch", num_markers = 5, 
+plot_marker_features <- function(object, group_by = "batch", num_markers = 5, 
                          selected_values = NULL, return_plotly = FALSE, 
                          marker_method = "wilcox", experiment = "gene", 
                          hide_technical = NULL, unique_markers = FALSE, 
@@ -302,14 +302,14 @@ plot_markers <- function(object, group_by = "batch", num_markers = 5,
 #' data(small_example_dataset)
 #' small_example_dataset <- object_calcn(small_example_dataset)
 #' # interactive plotly
-#' plot_readcount((small_example_dataset), return_plotly = TRUE)
+#' plot_colData_histogram((small_example_dataset), return_plotly = TRUE)
 #'
 #' # static plot
-#' plot_readcount((small_example_dataset), return_plotly = FALSE)
-plot_readcount <- function(object, group_by = NULL, fill_by = NULL, 
+#' plot_colData_histogram((small_example_dataset), return_plotly = FALSE)
+plot_colData_histogram <- function(object, group_by = NULL, fill_by = NULL, 
                            yscale = "linear", return_plotly = FALSE) {
     group_by <- group_by %||% glue("nCount_{mainExpName(object)}")
-    fill_by <- group_by %||% glue("nCount_{mainExpName(object)}")
+    fill_by <- fill_by %||% glue("nCount_{mainExpName(object)}")
     
     object_tbl <- rownames_to_column(
         get_colData(object), "SID") |> select(SID, 
@@ -551,7 +551,7 @@ plot_all_transcripts <- function(object, features,
     features <- features[features %in% rownames(altExp(object, "transcript"))]
     transcript_cols <- assay(altExp(object, "transcript"))[features, ]
     colData(object)[features] <- t(as.matrix(transcript_cols))
-    plot_out <- map(paste0(features), ~plot_feature(
+    plot_out <- map(paste0(features), ~plot_feature_on_embedding(
         object, embedding = embedding, features = .x, 
         return_plotly = FALSE)) |> set_names(features)
     if (combine) {

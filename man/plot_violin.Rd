@@ -6,7 +6,7 @@
 \usage{
 plot_violin(
   object,
-  plot_var = "batch",
+  plot_colData_on_embedding = "batch",
   plot_vals = NULL,
   features = "NRL",
   experiment = "gene",
@@ -16,7 +16,7 @@ plot_violin(
 \arguments{
 \item{object}{A SingleCellExperiment object}
 
-\item{plot_var}{Variable to group (color) cells by}
+\item{plot_colData_on_embedding}{Variable to group (color) cells by}
 
 \item{plot_vals}{plot values}
 

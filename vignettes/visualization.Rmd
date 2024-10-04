@@ -69,7 +69,7 @@ When plotting only one feature, output is identical to
 `SingleCellExperiment::FeaturePlot` 
  
 ```{r}
-plot_feature(chevreul_sce,
+plot_feature_on_embedding(chevreul_sce,
     embedding = "UMAP",
     features = "NRL", return_plotly = FALSE
 )
@@ -82,13 +82,13 @@ investigation.
 
 ## Plot read count or other QC measurements
 
-The `plot_readcount` function displays a histogram of cell read counts colored 
+The `plot_colData_histogram` function displays a histogram of cell read counts colored 
 according to a categorical variable using the argument `fill_by`. Here we can 
 see that read counts for this dataset are not distinctly different depending on
 the method of organoid preparation used (Kuwahara or Zhong)
 
 ```{r}
-plot_readcount(chevreul_sce,
+plot_colData_histogram(chevreul_sce,
     group_by = "nCount_RNA",
     fill_by = "Prep.Method"
 )
@@ -103,7 +103,7 @@ The group argument specifies the colData variable by which to group the cells
 by, by default, "batch".
 
 ```{r}
-plot_var(chevreul_sce,
+plot_colData_on_embedding(chevreul_sce,
     group = "gene_snn_res.0.2",
     embedding = "UMAP"
 )
@@ -111,13 +111,13 @@ plot_var(chevreul_sce,
 
 This function utilizes a SingleCellExperiment function, `DimPlot()`, as sub 
 function which produces the dimensional reduction plot. The interactive 
-parameter, `return_plotly`, in plot_var when set to TRUE will convert the 
+parameter, `return_plotly`, in plot_colData_on_embedding when set to TRUE will convert the 
 plot into an interactive plot using ggplotly function from R's plotly package
 
 ## Plot cluster marker genes  
 
 Marker genes of louvain clusters or additional experimental metadata can be 
-plotted using `plot_markers`. This allows visualization of n marker features 
+plotted using `plot_marker_features`. This allows visualization of n marker features 
 grouped by the metadata of interest. Marker genes are identified using wilcoxon 
 rank-sum test as implemented in `presto`. In the resulting dot plot the size 
 of the dot corresponds to the percentage of cells expressing the feature in 
@@ -126,7 +126,7 @@ feature.
 
 
 ```{r}
-plot_markers(chevreul_sce,
+plot_marker_features(chevreul_sce,
     group_by = "gene_snn_res.0.2",
     marker_method = "wilcox"
 )
