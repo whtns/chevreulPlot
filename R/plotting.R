@@ -106,6 +106,7 @@ plotly_settings <- function(plotly_plot, width = 600, height = 700) {
 #' @return a violin plot
 #' @export
 #' @examples
+#' data("small_example_dataset")
 #' plot_violin(small_example_dataset, "Mutation_Status", features = "Gene_0001")
 #' 
 plot_violin <- function(object, plot_colData_on_embedding = "batch", 
@@ -192,7 +193,6 @@ plot_feature_on_embedding <- function(object, embedding = c("UMAP", "PCA", "TSNE
 #'
 #' @return a ggplot with marker genes from group_by
 #' @export
-#' @importFrom chevreulProcess find_all_markers
 #' @importFrom forcats fct_na_value_to_level
 #'
 #' @examples
@@ -539,6 +539,7 @@ plot_transcript_composition <- function(object, gene_symbol,
 #' @return a list of embedding plots colored by a feature of interest
 #' @export
 #' @examples
+#' data("tiny_sce")
 #' plot_all_transcripts(tiny_sce, "NRL")
 #' 
 plot_all_transcripts <- function(object, features, 

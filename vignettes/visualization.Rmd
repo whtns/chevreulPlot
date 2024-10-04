@@ -45,7 +45,7 @@ introduce included functions, their usage, and resulting plots
 First step is to load Chevreul package and all other packages required 
 
 ```{r packages}
-library(chevreul)
+library(chevreulPlot)
 library(scater)
 library(scran)
 library(tidyverse)
@@ -154,6 +154,6 @@ with a dendogram added to the left side and the top.
 ```{r reproduce3, echo=FALSE}
 ## Session info
 library("sessioninfo")
-options(width = 120)
+options(width = 80)
 session_info()
 ```

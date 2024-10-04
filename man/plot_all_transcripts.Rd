@@ -30,6 +30,7 @@ a list of embedding plots colored by a feature of interest
 plot expression all transcripts for an input gene superimposed on embedding
 }
 \examples{
+data("tiny_sce")
 plot_all_transcripts(tiny_sce, "NRL")
 
 }

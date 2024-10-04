@@ -4,6 +4,7 @@
 ## usethis namespace: start
 #' @importFrom chevreuldata human_gene_transcript_sce
 #' @importFrom circlize colorRamp2
+#' @importFrom cluster agnes
 #' @importFrom ComplexHeatmap draw
 #' @importFrom ComplexHeatmap Heatmap
 #' @importFrom ComplexHeatmap HeatmapAnnotation

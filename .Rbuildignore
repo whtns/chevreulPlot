@@ -26,5 +26,5 @@
 ^Dockerfile$
 ^cache$
 ^rsconnect$
-^doc$
+^docs$
 ^Meta$

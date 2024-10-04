@@ -49,7 +49,7 @@ chevreul::create_project_db(destdir = "/your/path/to/app")
 
 Chevreul provides a single command to:
 
-- construct a SingleCellExperiment object
+- construct a SingleCellExperiment object.
 
 - filter genes by minimum expression and ubiquity
 

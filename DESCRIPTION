@@ -22,6 +22,7 @@ Depends:
 Imports:
     base,
     chevreuldata,
+    cluster,
     ComplexHeatmap (>= 2.5.4),
     circlize,
     dplyr,
