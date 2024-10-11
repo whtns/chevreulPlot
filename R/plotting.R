@@ -127,7 +127,6 @@ plot_violin <- function(object, plot_colData_on_embedding = "batch",
 #'
 #' Plots gene or transcript expression overlaid on a given embedding.
 #'
-#'
 #' @param object A SingleCellExperiment object
 #' @param embedding Dimensional reduction technique to be used
 #' @param features Feature to plot
