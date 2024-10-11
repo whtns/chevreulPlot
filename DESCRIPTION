@@ -11,10 +11,9 @@ Description: Tools for managing SingleCellExperiment objects as projects.
     Also included is a shiny app for visualization of pre-processed scRNA data.
     Supported by NIH grants R01CA137124 and R01EY026661 to David Cobrinik.
 License: MIT + file LICENSE
-URL: https://github.com/whtns/chevreul,
-    https://whtns.github.io/chevreul/
+URL: https://github.com/whtns/chevreulPlot, https://whtns.github.io/chevreulPlot/
 Date: 2024-03-24
-BugReports: https://github.com/cobriniklab/chevreul/issues
+BugReports: https://github.com/cobriniklab/chevreulPlot/issues
 Depends:
     R (>= 4.4.0),
     SingleCellExperiment,
