@@ -103,12 +103,3 @@ chevreul_sce <- human_gene_transcript_sce()
 chevreul_sce
 ```
 
-`R` session information.
-
-```{r reproduce3, echo=FALSE}
-## Session info
-library("sessioninfo")
-options(width = 120)
-session_info()
-```
-

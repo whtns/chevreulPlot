@@ -48,8 +48,7 @@ First step is to load Chevreul package and all other packages required
 library(chevreulPlot)
 library(scater)
 library(scran)
-library(tidyverse)
-library(ggraph)
+library(clustree)
 library(patchwork)
 
 library(chevreuldata)
@@ -148,12 +147,3 @@ plot_transcript_composition(chevreul_sce, "NRL",
 
 We can plot an annotated complex heat map from the SingleCellExperiment object 
 with a dendogram added to the left side and the top.
-
-## Session information
-
-```{r reproduce3, echo=FALSE}
-## Session info
-library("sessioninfo")
-options(width = 80)
-session_info()
-```
