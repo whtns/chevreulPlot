@@ -46,12 +46,6 @@ plot_colData_on_embedding <- function(object, group = "batch",
     metadata <- get_colData(object)
     key <- rownames(metadata)
 
-    if (embedding == "UMAP") {
-        dims <- c(1, 2)
-    } else if (embedding == "TSNE") {
-        dims <- c(1, 2)
-    }
-
     dims <- as.numeric(dims)
 
     d <- plotReducedDim(object = object, dimred = embedding, 
@@ -60,9 +54,7 @@ plot_colData_on_embedding <- function(object, group = "batch",
         # theme(legend.text=element_text(size=10)) +
         NULL
 
-    if (return_plotly == FALSE) {
-        return(d)
-    }
+    if(!return_plotly) return(d)
 
     plotly_plot <- ggplotly(d, tooltip = "cellid", height = 500) |>
         plotly_settings() |>
@@ -97,7 +89,7 @@ plotly_settings <- function(plotly_plot, width = 600, height = 700) {
 #' grouped by a metadata variable
 #'
 #' @param object A SingleCellExperiment object
-#' @param plot_colData_on_embedding Variable to group (color) cells by
+#' @param group_by Variable to group (color) cells by
 #' @param plot_vals plot values
 #' @param features Features to plot
 #' @param experiment Name of experiment to use, defaults to active experiment
@@ -109,16 +101,16 @@ plotly_settings <- function(plotly_plot, width = 600, height = 700) {
 #' data("small_example_dataset")
 #' plot_violin(small_example_dataset, "Mutation_Status", features = "Gene_0001")
 #' 
-plot_violin <- function(object, plot_colData_on_embedding = "batch", 
+plot_violin <- function(object, group_by = "batch", 
                         plot_vals = NULL, features = "NRL", 
                         experiment = "gene", ...) {
     if (is.null(plot_vals)) {
-        plot_vals <- unique(get_colData(object)[[plot_colData_on_embedding]])
+        plot_vals <- unique(get_colData(object)[[group_by]])
         plot_vals <- plot_vals[!is.na(plot_vals)]
     }
-    object <- object[, get_colData(object)[[plot_colData_on_embedding]] %in% plot_vals]
+    object <- object[, get_colData(object)[[group_by]] %in% plot_vals]
     vln_plot <- plotExpression(
-        object, features = features, x = plot_colData_on_embedding, color_by = plot_colData_on_embedding) + 
+        object, features = features, x = group_by, color_by = group_by) + 
         geom_boxplot(width = 0.2) + NULL
     print(vln_plot)
 }
@@ -150,19 +142,13 @@ plot_feature_on_embedding <- function(object, embedding = c("UMAP", "PCA", "TSNE
     metadata <- get_colData(object)
     key <- rownames(metadata)
 
-    if (embedding %in% c("TSNE", "UMAP")) {
-        dims <- c(1, 2)
-    }
-
     dims <- as.numeric(dims)
 
     fp <- plotReducedDim(object = object, color_by = features, 
                          dimred = embedding) +
         aes(key = key, cellid = key, alpha = 0.7)
 
-    if (return_plotly == FALSE) {
-        return(fp)
-    }
+    if (!return_plotly == FALSE) return(fp)
 
     plotly_plot <- ggplotly(fp, tooltip = "cellid", height = 500) |>
         plotly_settings() |>
@@ -269,9 +255,8 @@ plot_marker_features <- function(object, group_by = "batch", num_markers = 5,
         # scale_x_discrete(limits = sliced_markers) +
         geom_hline(yintercept = vline_coords, linetype = 2) +
         NULL
-    if (return_plotly == FALSE) {
-        return(markerplot)
-    }
+    if (!return_plotly) return(markerplot)
+
     plot_height <- (150 * num_markers)
     plot_width <- (100 * length(levels(
         as.factor(get_colData(object)[[group_by]]))))
@@ -299,7 +284,7 @@ plot_marker_features <- function(object, group_by = "batch", num_markers = 5,
 #' @examples
 #' 
 #' data(small_example_dataset)
-#' small_example_dataset <- object_calcn(small_example_dataset)
+#' small_example_dataset <- sce_calcn(small_example_dataset)
 #' # interactive plotly
 #' plot_colData_histogram((small_example_dataset), return_plotly = TRUE)
 #'
@@ -310,11 +295,11 @@ plot_colData_histogram <- function(object, group_by = NULL, fill_by = NULL,
     group_by <- group_by %||% glue("nCount_{mainExpName(object)}")
     fill_by <- fill_by %||% glue("nCount_{mainExpName(object)}")
     
-    object_tbl <- rownames_to_column(
+    sce_tbl <- rownames_to_column(
         get_colData(object), "SID") |> select(SID, 
                                                      !!as.symbol(group_by), 
                                                      !!as.symbol(fill_by))
-    rc_plot <- ggplot(object_tbl, aes(x = reorder(SID, -!!as.symbol(group_by)), 
+    rc_plot <- ggplot(sce_tbl, aes(x = reorder(SID, -!!as.symbol(group_by)), 
                                       y = !!as.symbol(group_by), 
                                       fill = !!as.symbol(fill_by))) +
         geom_bar(position = "identity", stat = "identity") +
@@ -324,9 +309,8 @@ plot_colData_histogram <- function(object, group_by = NULL, fill_by = NULL,
     if (yscale == "log") {
         rc_plot <- rc_plot + scale_y_log10()
     }
-    if (return_plotly == FALSE) {
-        return(rc_plot)
-    }
+    if (!return_plotly) return(rc_plot)
+    
     rc_plot <- ggplotly(rc_plot, tooltip = "cellid", height = 500) |>
         plotly_settings() |>
         toWebGL() |>
@@ -493,7 +477,7 @@ plot_transcript_composition <- function(object, gene_symbol,
     transcripts <- transcripts[transcripts %in% 
                                    rownames(altExp(object, "transcript"))]
 
-    data <- counts(altExp(object, "transcript"))[transcripts, ] |>
+    data <- logcounts(altExp(object, "transcript"))[transcripts, ] |>
         as.matrix() |>
         t()
 
@@ -548,7 +532,7 @@ plot_all_transcripts <- function(object, features,
         features <- genes_to_transcripts(features)
     }
     features <- features[features %in% rownames(altExp(object, "transcript"))]
-    transcript_cols <- assay(altExp(object, "transcript"))[features, ]
+    transcript_cols <- logcounts(altExp(object, "transcript"))[features, ]
     colData(object)[features] <- t(as.matrix(transcript_cols))
     plot_out <- map(paste0(features), ~plot_feature_on_embedding(
         object, embedding = embedding, features = .x, 

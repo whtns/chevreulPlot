@@ -63,8 +63,8 @@ By default clustering will be run at ten different resolutions between
 argument as a numeric vector.
 
 ``` r
-clustered_object <- clustering_workflow(chevreul_sce,
-    experiment_name = "object_hu_trans",
+clustered_sce <- clustering_workflow(chevreul_sce,
+    experiment_name = "sce_hu_trans",
     organism = "human"
 )
 ```
